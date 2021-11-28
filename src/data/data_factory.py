@@ -10,25 +10,6 @@ from argoverse.data_loading.argoverse_tracking_loader import ArgoverseTrackingLo
 from .argoverse.dataset import ArgoverseMapDataset
 from .argoverse.splits import TRAIN_LOGS, VAL_LOGS
 
-
-def build_nuscenes_datasets(config):
-    print('==> Loading NuScenes dataset...')
-    nuscenes = NuScenes(config.nuscenes_version, 
-                        os.path.expandvars(config.dataroot))
-    
-    # Exclude calibration scenes
-    if config.hold_out_calibration:
-        train_scenes = list(set(TRAIN_SCENES) - set(CALIBRATION_SCENES))
-    else:
-        train_scenes = TRAIN_SCENES
-    
-    train_data = NuScenesMapDataset(nuscenes, config.label_root, 
-                                    config.img_size, train_scenes)
-    val_data = NuScenesMapDataset(nuscenes, config.label_root, 
-                                  config.img_size, VAL_SCENES)
-    return train_data, val_data
-
-
 def build_argoverse_datasets(config):
     print('==> Loading Argoverse dataset...')
     dataroot = os.path.expandvars(config.dataroot)
@@ -49,8 +30,7 @@ def build_argoverse_datasets(config):
     # since we are using a subset of train set as validation, we need to
     # set the identifier as train.
     val_loaders = {
-#         'val' : ArgoverseTrackingLoader(os.path.join(dataroot, 'val')) 
-        'train' : ArgoverseTrackingLoader(os.path.join(dataroot, 'train'))
+        'val' : ArgoverseTrackingLoader(os.path.join(dataroot, 'val'))
     }
 
     # Create datasets using new argoverse splits
@@ -64,13 +44,7 @@ def build_argoverse_datasets(config):
 
 
 def build_datasets(dataset_name, config):
-    if dataset_name == 'nuscenes':
-        return build_nuscenes_datasets(config)
-    elif dataset_name == 'argoverse':
-        return build_argoverse_datasets(config)
-    else:
-        raise ValueError(f"Unknown dataset option '{dataset_name}'")
-
+    return build_argoverse_datasets(config)
 
 
 def build_trainval_datasets(dataset_name, config):

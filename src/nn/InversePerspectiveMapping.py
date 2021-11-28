@@ -16,11 +16,6 @@ class InversePerspectiveMapping():
     def __init__(self):
         super().__init__()
     
-    def initialise(self, prior):
-        prior = torch.tensor(prior)
-        self.weight.data.zero_()
-        self.bias.data.copy_(torch.log(prior / (1 - prior)))
-    
     def homography_from_calibration(self, camera_SE3_ground: SE3, K: np.ndarray):# -> np.ndarray:
         r1 = camera_SE3_ground.transform_matrix[:3,0].reshape(-1,1)
         r2 = camera_SE3_ground.transform_matrix[:3,1].reshape(-1,1)
@@ -29,14 +24,11 @@ class InversePerspectiveMapping():
         img_H_ground = K.dot(np.hstack([r1,r2,t]))
         return img_H_ground
 
-    
-    def mapping(self, img_front, split_data_dir, log_id):
-        camera_name = 'ring_front_center'
-        split_data_dir = f'{config.dataroot}/val'
-        dl = SimpleArgoverseTrackingDataLoader(data_dir=split_data_dir, labels_dir=split_data_dir)
-        city = dl.get_city_name(log_id)
-        city_SE3_egovehicle = dl.get_city_to_egovehicle_se3(log_id, cam_timestamp)
-        calib_data = dl.get_log_calibration_data(log_id)
+    def mapping(self, dl, log_id, img_front):
+        # split_data_dir = f'{config.dataroot}/val'
+        # dl = SimpleArgoverseTrackingDataLoader(data_dir=split_data_dir, labels_dir=split_data_dir)
+        city_SE3_egovehicle = dl.get_pose(frame, log_id)
+        calib_data = dl.get_calibration(camera='ring_front_center', log_id)
         camera_config = get_calibration_config(calib_data, camera_name)
 
         camera_SE3_egovehicle = camera_config.extrinsic
