@@ -30,7 +30,7 @@ class PyramidOccupancyNetwork(nn.Module):
         if ipm_transform_on:
             # concatenate the ipm features
             import pdb;pdb.set_trace()
-            ipm = self.ipm_transform(image)
+            ipm = self.ipm_transform(image, calib)
             bev_feats = torch.cat((ipm, bev_feats), 1)
         
         

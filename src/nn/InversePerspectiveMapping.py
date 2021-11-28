@@ -5,24 +5,23 @@ import cv2
 import numpy as np
 import scipy.ndimage
 import argoverse 
+import torch
+import torch.nn as nn
 from argoverse.utils.se3 import SE3
 from argoverse.data_loading.simple_track_dataloader import SimpleArgoverseTrackingDataLoader
 from argoverse.utils.calibration import get_calibration_config
 
 
-class InversePerspectiveMapping(nn.Conv2d):
-    def __init__(self, in_channels, num_class):
-        super().__init__(in_channels, num_class, 1)
+class InversePerspectiveMapping():
+    def __init__(self):
+        super().__init__()
     
     def initialise(self, prior):
         prior = torch.tensor(prior)
         self.weight.data.zero_()
         self.bias.data.copy_(torch.log(prior / (1 - prior)))
     
-    def homography_from_calibration(self, camera_SE3_ground: SE3, K: np.ndarray) -> np.ndarray:
-    """
-    See Hartley Zisserman, Section 8.1.1
-    """
+    def homography_from_calibration(self, camera_SE3_ground: SE3, K: np.ndarray):# -> np.ndarray:
         r1 = camera_SE3_ground.transform_matrix[:3,0].reshape(-1,1)
         r2 = camera_SE3_ground.transform_matrix[:3,1].reshape(-1,1)
         t =  camera_SE3_ground.transform_matrix[:3,3].reshape(-1,1)
