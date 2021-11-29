@@ -18,7 +18,7 @@ class PyramidOccupancyNetwork(nn.Module):
         self.ipm_transform = ipm_transform
     
 
-    def forward(self, image, calib, log_id, *args):
+    def forward(self, image, calib, city_SE3_egovehicle, *args):
 
         # Extract multiscale feature maps
         feature_maps = self.frontend(image)
@@ -29,8 +29,9 @@ class PyramidOccupancyNetwork(nn.Module):
         ipm_transform_on = True
         if ipm_transform_on:
             # concatenate the ipm features
-            import pdb;pdb.set_trace()
-            ipm = self.ipm_transform(dl, log_id, image)
+            # import pdb;pdb.set_trace()
+            ipm = self.ipm_transform()
+            bev_img = ipm.mapping(city_SE3_egovehicle, calib, image)
             bev_feats = torch.cat((ipm, bev_feats), 1)
         
         

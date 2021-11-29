@@ -45,6 +45,7 @@ def process_scene(split, scene, map_data, config):
             process_frame(split, scene, camera, frame, map_data, config)
             i += 1
             
+            
 
 def process_frame(split, scene, camera, frame, map_data, config):
 

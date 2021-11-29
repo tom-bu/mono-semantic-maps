@@ -1,6 +1,6 @@
 train_dataset: argoverse
-dataroot: data/argo/argoverse-tracking
-label_root: data/argo/labels
+dataroot: /home/ubuntu/data/argoverse-tracking
+label_root: /home/ubuntu/data/labels
 img_size: [960, 600]
 class_weights:
       -  1.7    # drivable_area

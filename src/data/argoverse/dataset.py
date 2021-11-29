@@ -69,10 +69,10 @@ class ArgoverseMapDataset(Dataset):
         image = self.load_image(split, log, camera, timestamp)
         calib = self.load_calib(split, log, camera)
         labels, mask = self.load_labels(split, log, camera, timestamp)
+        city_SE3_egovehicle = get_pose(timestamp, log)
 
-        return image, calib, labels, mask
-
-
+        return image, calib, labels, mask, city_SE3_egovehicle
+    
     def load_image(self, split, log, camera, timestamp):
         
         # Load image

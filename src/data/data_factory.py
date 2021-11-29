@@ -2,10 +2,6 @@ import os
 from torch.utils.data import DataLoader, RandomSampler
 from .augmentation import AugmentedMapDataset
 
-from nuscenes import NuScenes
-from .nuscenes.dataset import NuScenesMapDataset
-from .nuscenes.splits import TRAIN_SCENES, VAL_SCENES, CALIBRATION_SCENES
-
 from argoverse.data_loading.argoverse_tracking_loader import ArgoverseTrackingLoader
 from .argoverse.dataset import ArgoverseMapDataset
 from .argoverse.splits import TRAIN_LOGS, VAL_LOGS

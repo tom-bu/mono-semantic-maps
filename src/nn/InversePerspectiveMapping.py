@@ -10,26 +10,30 @@ import torch.nn as nn
 from argoverse.utils.se3 import SE3
 from argoverse.data_loading.simple_track_dataloader import SimpleArgoverseTrackingDataLoader
 from argoverse.utils.calibration import get_calibration_config
-
+from argoverse.data_loading.argoverse_tracking_loader \
+    import ArgoverseTrackingLoader
 
 class InversePerspectiveMapping():
     def __init__(self):
         super().__init__()
-    
+        
     def homography_from_calibration(self, camera_SE3_ground: SE3, K: np.ndarray):# -> np.ndarray:
-        r1 = camera_SE3_ground.transform_matrix[:3,0].reshape(-1,1)
-        r2 = camera_SE3_ground.transform_matrix[:3,1].reshape(-1,1)
-        t =  camera_SE3_ground.transform_matrix[:3,3].reshape(-1,1)
+        r1 = self.camera_SE3_ground.transform_matrix[:3,0].reshape(-1,1)
+        r2 = self.camera_SE3_ground.transform_matrix[:3,1].reshape(-1,1)
+        t =  self.camera_SE3_ground.transform_matrix[:3,3].reshape(-1,1)
 
         img_H_ground = K.dot(np.hstack([r1,r2,t]))
         return img_H_ground
 
-    def mapping(self, dl, log_id, img_front):
+    def mapping(calib_data, camera_SE3_ground, img_front):
+        self.calib_data = calib_data
+        self.camera_SE3_ground = camera_SE3_ground
+        self.img_front = img_front
         # split_data_dir = f'{config.dataroot}/val'
         # dl = SimpleArgoverseTrackingDataLoader(data_dir=split_data_dir, labels_dir=split_data_dir)
-        city_SE3_egovehicle = dl.get_pose(frame, log_id)
-        calib_data = dl.get_calibration(camera='ring_front_center', log_id)
-        camera_config = get_calibration_config(calib_data, camera_name)
+        # city_SE3_egovehicle = get_pose(frame, "10b8dee6-778f-33e4-a946-d842d2d9c3d7")
+        # calib_data = get_calibration('ring_front_center', "10b8dee6-778f-33e4-a946-d842d2d9c3d7")
+        camera_config = get_calibration_config(self.calib_data, camera_name)
 
         camera_SE3_egovehicle = camera_config.extrinsic
         camera_SE3_egovehicle = SE3(rotation=camera_SE3_egovehicle[:3,:3], translation=camera_SE3_egovehicle[:3,3])
@@ -60,7 +64,7 @@ class InversePerspectiveMapping():
             ])
         shiftedground_H_img = shiftedground_H_ground.dot(ground_H_img)
         # We use OpenCV to perform the interpolation needed during warping:
-        bev_img = cv2.warpPerspective(img_front, shiftedground_H_img, dsize=(out_width, out_height))
+        bev_img = cv2.warpPerspective(self.img_front, shiftedground_H_img, dsize=(out_width, out_height))
         return bev_img
 
 # cam_timestamp = '315973061557317752'

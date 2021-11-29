@@ -14,7 +14,6 @@ from src.models.model_factory import build_model, build_criterion
 from src.data.data_factory import build_dataloaders
 from src.utils.configs import get_default_configuration, load_config
 from src.utils.confusion import BinaryConfusionMatrix
-from src.data.nuscenes.utils import NUSCENES_CLASS_NAMES
 from src.data.argoverse.utils import ARGOVERSE_CLASS_NAMES
 from src.utils.visualise import colorise
 
@@ -38,12 +37,12 @@ def train(dataloader, model, criterion, optimiser, summary, config, epoch):
             batch = [t.cuda() for t in batch]
         
         # Predict class occupancy scores and compute loss
-        image, calib, labels, mask = batch
+        image, calib, labels, mask, city_SE3_egovehicle = batch
         if config.model == 'ved':
             logits, mu, logvar = model(image)
             loss = criterion(logits, labels, mask, mu, logvar)
         else:
-            logits = model(image, calib)
+            logits = model(image, calib, city_SE3_egovehicle)
             loss = criterion(logits, labels, mask)
 
 
@@ -92,13 +91,13 @@ def evaluate(dataloader, model, criterion, summary, config, epoch):
             batch = [t.cuda() for t in batch]
         
         # Predict class occupancy scores and compute loss
-        image, calib, labels, mask = batch
+        image, calib, labels, mask, city_SE3_egovehicle = batch
         with torch.no_grad():
             if config.model == 'ved':
                 logits, mu, logvar = model(image)
                 loss = criterion(logits, labels, mask, mu, logvar)
             else:
-                logits = model(image, calib)
+                logits = model(image, calib, city_SE3_egovehicle)
                 loss = criterion(logits, labels, mask)
 
         # Update confusion matrix

@@ -86,6 +86,7 @@ def build_pyramid_occupancy_network(config):
     classifier.initialise(config.prior)
     
     # Build ipm_transform
+    # city_SE3_egovehicle = get_pose(frame, "10b8dee6-778f-33e4-a946-d842d2d9c3d7")
     ipm_transform = InversePerspectiveMapping()
     
     # Assemble Pyramid Occupancy Network
