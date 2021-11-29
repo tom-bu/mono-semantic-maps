@@ -12,7 +12,7 @@ class AugmentedMapDataset(Dataset):
         return len(self.dataset)
     
     def __getitem__(self, index):
-        image, calib, labels, mask = self.dataset[index]
+        image, calib, labels, mask, city_SE3_egovehicle = self.dataset[index]
 
         # Apply data augmentation
         if self.hflip:

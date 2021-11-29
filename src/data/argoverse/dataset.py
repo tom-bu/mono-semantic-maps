@@ -9,6 +9,7 @@ from argoverse.utils.camera_stats import RING_CAMERA_LIST
 
 from .utils import IMAGE_WIDTH, IMAGE_HEIGHT, ARGOVERSE_CLASS_NAMES
 from ..utils import decode_binary_labels
+from argoverse.data_loading.pose_loader import get_city_SE3_egovehicle_at_sensor_t
 
 class ArgoverseMapDataset(Dataset):
 
@@ -55,6 +56,15 @@ class ArgoverseMapDataset(Dataset):
     def __len__(self):
         return len(self.examples)
     
+    # def get_pose(self, idx: int, log_id: Optional[str] = None):
+    #     if log_id is None:
+    #         log_id = self.current_log
+    #     self._ensure_lidar_timestamp_list_populated()
+    #     assert self._lidar_timestamp_list is not None
+
+    #     timestamp = self._lidar_timestamp_list[log_id][idx]
+
+    #     return get_city_SE3_egovehicle_at_sensor_t(timestamp, self.root_dir, log_id)
 
     def __getitem__(self, timestamp):
 
@@ -69,7 +79,7 @@ class ArgoverseMapDataset(Dataset):
         image = self.load_image(split, log, camera, timestamp)
         calib = self.load_calib(split, log, camera)
         labels, mask = self.load_labels(split, log, camera, timestamp)
-        city_SE3_egovehicle = get_pose(timestamp, log)
+        city_SE3_egovehicle = get_city_SE3_egovehicle_at_sensor_t(timestamp, "/home/ubuntu/data/argoverse-tracking/train/10b8dee6-778f-33e4-a946-d842d2d9c3d7/", log)
 
         return image, calib, labels, mask, city_SE3_egovehicle
     
