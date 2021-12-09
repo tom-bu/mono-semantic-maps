@@ -34,6 +34,6 @@ python train.py --dataset argoverse --model pyramid
 ```
 or train the base model + image/semantic ipm by running 
 ```
-python train.py --dataset argoverse --model pyramid-ipm
+python train.py --dataset argoverse --model pyramid_ipm
 ```
 
