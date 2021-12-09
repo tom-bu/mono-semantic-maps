@@ -26,9 +26,14 @@ To train on the Argoverse dataset:
 
 
 ## Training
-Once ground truth labels have been generated, you can train our method by running the `train.py` script in the root directory: 
+Run semantic.py script to generate semantic masks. Then run ipm_semantic.py and ipm_image.py to generate IPMed image/semantic masks.
+
+Once ground truth labels and IPMed image/semantic masks have been generated, you can train base model by running the `train.py` script in the root directory: 
 ```
-python train.py --dataset nuscenes --model pyramid
+python train.py --dataset argoverse --model pyramid
 ```
-The `--dataset` flag allows you to specify the dataset to train on, either `'argoverse'` or `'nuscenes'`. The model flag allows training of the proposed method `'pyramid'`, or one of the baseline methods (`'vpn'` or `'ved'`). Additional command line options can be specified by passing a list of key-value pairs to the `--options` flag. The full list of configurable options can be found in the `configs/defaults.yml` file. 
+or train the base model + image/semantic ipm by running 
+```
+python train.py --dataset argoverse --model pyramid-ipm
+```
 
